@@ -21,7 +21,8 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 Look at the current repo to understand its starting state. Read whatever exists; don't assume:
 
 - `git remote -v` and `.git/config`: is this a GitHub repo? Which one?
-- `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Is there already an `## Agent skills` section in either?
+- `.ai/guidelines/agents.md`: does it exist? Is there already an `## Agent skills` section in it?
+- `AGENTS.md` and `CLAUDE.md` at the repo root: does either contain a legacy `## Agent skills` section? Note that root files are not written directly; in Laravel Boost projects, Boost generates `AGENTS.md` and `CLAUDE.md` from `.ai/guidelines/` and framework rules.
 - `CONTEXT.md` and `CONTEXT-MAP.md` at the repo root
 - `docs/adr/` and any `src/*/docs/adr/` directories
 - `docs/agents/`: does this skill's prior output already exist?
@@ -64,22 +65,23 @@ Offer **multi-context** (a root `CONTEXT-MAP.md` pointing to per-context `CONTEX
 
 Show the user a draft of:
 
-- The `## Agent skills` block to add to whichever of `CLAUDE.md` / `AGENTS.md` is being edited (see step 4 for selection rules)
+- The `## Agent skills` block to write or update in `.ai/guidelines/agents.md`
 - The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (the last only when `triage` is installed)
 
 Let them edit before writing.
 
 ### 4. Write
 
-**Pick the file to edit:**
+**Target file:**
 
-- If `CLAUDE.md` exists, edit it.
-- Else if `AGENTS.md` exists, edit it.
-- If neither exists, ask the user which one to create; don't pick for them.
+Write to `.ai/guidelines/agents.md` (creating the `.ai/guidelines/` directory if needed).
 
-Never create `AGENTS.md` when `CLAUDE.md` already exists (or vice versa); always edit the one that's already there.
+Any creation or edit that would otherwise target `AGENTS.md` or `CLAUDE.md` must be written to `.ai/guidelines/agents.md`. Never create or edit `AGENTS.md` or `CLAUDE.md` directly at the repo root. In environments such as Laravel Boost, those files are generated and regenerated from `.ai/guidelines/` alongside framework and package rules, so direct edits to root files are overwritten or bypassed.
 
-If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
+- If `.ai/guidelines/agents.md` exists and already contains an `## Agent skills` block, update its contents in-place rather than appending a duplicate.
+- If `.ai/guidelines/agents.md` exists without that block, append it without modifying surrounding guidelines.
+- If `.ai/guidelines/agents.md` does not exist, create it with the block.
+- If a legacy `## Agent skills` block exists in root `AGENTS.md` or `CLAUDE.md`, remove that block from the root file so it does not conflict with generated output. Never create root `AGENTS.md` or `CLAUDE.md`.
 
 The block:
 
@@ -113,4 +115,4 @@ For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch us
 
 ### 5. Done
 
-Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later; re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
+Tell the user the setup is complete and which engineering skills will now read from these files. Mention that `.ai/guidelines/agents.md` holds the guidelines pointer block (which Laravel Boost compiles into `AGENTS.md` / `CLAUDE.md` on `boost:update`), and that they can edit `docs/agents/*.md` directly later; re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.

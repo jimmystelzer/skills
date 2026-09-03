@@ -1,6 +1,6 @@
 ## O que faz
 
-`setup-skills` responde três perguntas sobre um repo: onde as issues vivem, quais são os nomes dos labels de triagem, e onde ficam os docs de domínio. Ele registra as respostas como arquivos markdown sob `docs/agents/`, mais um arquivo de diretrizes resumido em `.ai/guidelines/agent-skills.md`.
+`setup-skills` responde três perguntas sobre um repo: onde as issues vivem, quais são os nomes dos labels de triagem, e onde ficam os docs de domínio. Ele registra as respostas como arquivos markdown sob `docs/agents/`, mais um arquivo de diretrizes resumido em `.ai/guidelines/agents.md`.
 
 Esses arquivos são a única coisa que varia entre repos. Os skills em si são idênticos em todos os lugares; eles leem `docs/agents/issue-tracker.md` em tempo de execução e fazem o que diz. É por isso que o conjunto não está vinculado ao GitHub, e por que nenhum arquivo de skill precisa ser editado para apontá-lo para outro lugar. Invocá-lo com "vincule os skills a um tracker de issues customizado" funciona com qualquer coisa que você possa conectar programaticamente, com zero alterações nos skills.
 
@@ -21,7 +21,7 @@ Ele escreve no repo que você roda:
 | `issue-tracker.md` | `docs/agents/` |
 | `domain.md` | `docs/agents/` |
 | `triage-labels.md` | `docs/agents/`, apenas quando o skill `triage` está instalado |
-| `agent-skills.md` | `.ai/guidelines/`, um arquivo de diretrizes nomeado pelo que documenta |
+| `agents.md` | `.ai/guidelines/`, um arquivo de diretrizes nomeado pelo que documenta |
 
 Tudo é markdown commitado. Não há modo de usuário ou global: a configuração vive no repo, então cada repo tem sua própria cópia.
 
@@ -58,11 +58,11 @@ Não. GitHub, GitLab e markdown local sob `.scratch/` todos vêm como templates 
 
 **Preciso rodá-lo novamente após atualizar os skills?**
 
-Perguntado diretamente após a v1.1, Matt disse que sim. A mensagem de encerramento do próprio skill é mais suave: diz que rodar novamente só é necessário para trocar trackers ou recomeçar. Ambos são justificáveis e a razão da lacuna é real: os templates semente mudam entre versões, então um `docs/agents/issue-tracker.md` escrito por uma versão mais antiga pode ficar desatualizado em relação aos skills que agora o leem. Se um skill downstream começa a fazer algo que os docs descrevem diferente, rodar novamente é a correção barata.
+Perguntado diretamente após a v1.1, a resposta foi sim. A mensagem de encerramento do próprio skill é mais suave: diz que rodar novamente só é necessário para trocar trackers ou recomeçar. Ambos são justificáveis e a razão da lacuna é real: os templates semente mudam entre versões, então um `docs/agents/issue-tracker.md` escrito por uma versão mais antiga pode ficar desatualizado em relação aos skills que agora o leem. Se um skill downstream começa a fazer algo que os docs descrevem diferente, rodar novamente é a correção barata.
 
 **Ele toca no meu `CLAUDE.md` ou `AGENTS.md`?**
 
-Não. Versões anteriores escolhiam um desses arquivos e escreviam um bloco `## Agent skills` nele, o que significava que um repo com um `CLAUDE.md` do Claude Code recebia o bloco em algum lugar que o Codex nunca lê. Essa regra foi removida. O skill agora escreve apenas em `.ai/guidelines/agent-skills.md`, o diretório que o [Laravel Boost](https://laravel.com/docs/boost) mergeia em quaisquer arquivos de instrução que a configuração Boost do seu projeto gera, então a mesma saída cai no lugar certo em qualquer [harness](https://www.aihero.dev/ai-coding-dictionary/harness). Em um repo sem Boost, os skills downstream ainda encontram sua configuração através dos caminhos `docs/agents/` em tempo de execução; adicione um pointer de uma linha no seu `AGENTS.md` se quiser os resumos sempre no contexto. Um bloco `## Agent skills` remanescente de uma execução mais antiga é migrado para o arquivo de diretrizes e deletado do arquivo raiz.
+Não. Versões anteriores escolhiam um desses arquivos e escreviam um bloco `## Agent skills` nele, o que significava que um repo com um `CLAUDE.md` do Claude Code recebia o bloco em algum lugar que o Codex nunca lê. Essa regra foi removida. O skill agora escreve apenas em `.ai/guidelines/agents.md`, o diretório que o [Laravel Boost](https://laravel.com/docs/boost) mergeia em quaisquer arquivos de instrução que a configuração Boost do seu projeto gera, então a mesma saída cai no lugar certo em qualquer [harness](https://www.aihero.dev/ai-coding-dictionary/harness). Em um repo sem Boost, os skills downstream ainda encontram sua configuração através dos caminhos `docs/agents/` em tempo de execução; adicione um pointer de uma linha no seu `AGENTS.md` se quiser os resumos sempre no contexto. Um bloco `## Agent skills` remanescente de uma execução mais antiga é migrado para o arquivo de diretrizes e deletado do arquivo raiz.
 
 **Ele não criou meus labels de triagem.**
 
@@ -86,7 +86,7 @@ Uma reclamação de longa data diz que sim, nestas palavras: *"ter um skill para
 ## Está funcionando se
 
 - `docs/agents/issue-tracker.md` e `docs/agents/domain.md` existem, mais `triage-labels.md` se `triage` estiver instalado.
-- `.ai/guidelines/agent-skills.md` existe com um resumo de uma linha apontando para cada um desses arquivos, e `CLAUDE.md` / `AGENTS.md` foram deixados intocados. Em um projeto Boost, um `boost:update` incorpora o arquivo de diretrizes nos arquivos de instrução gerados.
+- `.ai/guidelines/agents.md` existe com um resumo de uma linha apontando para cada um desses arquivos, e `CLAUDE.md` / `AGENTS.md` foram deixados intocados. Em um projeto Boost, um `boost:update` incorpora o arquivo de diretrizes nos arquivos de instrução gerados.
 - O tracker que ele propôs corresponde ao remote que você realmente usa, e as strings dos labels correspondem a labels que realmente existem no seu tracker.
 - Depois, `/to-tickets` publica sem perguntar onde as issues vivem, e `/triage` aplica labels em vez de inventá-los.
 - Nada nos arquivos de skill em si mudou. Se o setup editou um `SKILL.md`, algo deu errado.
